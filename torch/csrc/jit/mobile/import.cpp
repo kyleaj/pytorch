@@ -197,8 +197,8 @@ mobile::Module BytecodeDeserializer::deserialize(
     c10::optional<at::Device> device) {
   device_ = device;
   auto mcu = std::make_shared<mobile::CompilationUnit>();
-  auto bvals = readArchive("bytecode", mcu).toTuple()->elements();
-  parseMethods(bvals, *mcu);
+  // auto bvals = readArchive("bytecode", mcu).toTuple()->elements();
+  // parseMethods(bvals, *mcu);
 
   return mobile::Module(readArchive("data", mcu).toObject(), mcu);
 }
@@ -274,6 +274,8 @@ c10::IValue BytecodeDeserializer::readArchive(
       auto obj = c10::ivalue::Object::create(type, ndict);
       auto it = dict.begin();
       for (size_t i = 0; i < ndict; ++i) {
+        auto temp = obj->type();
+        temp->addAttribute(std::to_string(i), it->key().type());
         obj->setSlot(i, it->value());
         ++it;
       }
